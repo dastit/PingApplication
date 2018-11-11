@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">PingApplication</string>
+    <string name="ping_button_label">PING</string>
+    <string name="address_label">Название хоста или IP адрес</string>
+    <string name="settings_button_label">Настройки</string>
+    <string name="manually_change">Изменить вручную</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="number_of_packs_label">Количество пакетов</string>
+    <string name="infinite_number_of_packs">не определено</string>
+    <string name="stop_ping_button">STOP</string>
+    <string name="host_name_error">Неверное имя хоста</string>
+    <string name="host_name_label_text">Имя</string>
+    <string name="host_name_label_ip">IP</string>
+    <string name="update_rate_label">Обновлять каждые</string>
+    <string name="save_button_label">Сохранить</string>
+    <string name="preferences_name">shared_preferences_name</string>
+    <string name="sp_name">shared_name</string>
+    <string name="sp_short_name">shared_short_name</string>
+    <string name="sp_rate">shared_rate</string>
+    <string name="short_address_label">Краткий заголовок</string>
+
+
+    <string-array name="update_rate_dims">
+        <item>Час</item>
+        <item>Минуты</item>
+        <item>Секунды</item>
+    </string-array>
+</resources>

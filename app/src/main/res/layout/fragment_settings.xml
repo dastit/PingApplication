@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsFragment">
+
+    <TextView
+        android:id="@+id/numberOfPacksLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/number_of_packs_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/text_margin"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size"/>
+
+    <EditText
+        android:id="@+id/settings_exact_number_of_packs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textSize="@dimen/text_size"
+        android:text="4"
+        app:layout_constraintEnd_toStartOf="@+id/numberOfPacksSwitch"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numberOfPacksLabel" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/numberOfPacksSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:checked="false"
+        app:layout_constraintBottom_toBottomOf="@+id/settings_exact_number_of_packs"
+        app:layout_constraintEnd_toStartOf="@+id/infiniteNumberOfPacks"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/settings_exact_number_of_packs"
+        app:layout_constraintTop_toTopOf="@+id/settings_exact_number_of_packs" />
+
+    <TextView
+        android:id="@+id/infiniteNumberOfPacks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/infinite_number_of_packs"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/numberOfPacksSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/numberOfPacksSwitch"
+        app:layout_constraintTop_toTopOf="@+id/numberOfPacksSwitch" />
+
+</android.support.constraint.ConstraintLayout>
