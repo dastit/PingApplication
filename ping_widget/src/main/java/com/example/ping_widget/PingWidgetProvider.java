@@ -78,9 +78,7 @@ public class PingWidgetProvider extends AppWidgetProvider {
             Calendar calendar = Calendar.getInstance();
 
             views.setTextViewText(com.example.pingapplication.R.id.widget_short_host_name,
-                                  shortHostName + " (" + calendar.get(
-                                          Calendar.HOUR) + ":" + calendar
-                                          .get(Calendar.MINUTE) + ")");
+                                  shortHostName);
 
             String finalCommand;
             if (hostName.contains(":")) {
@@ -100,7 +98,9 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                                com.example.pingapplication.R.drawable.rect_ok);
                 }
                 views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
-                                      pingTask.get());
+                                      pingTask.get()+ " (" + calendar.get(
+                                Calendar.HOUR_OF_DAY) + ":" + calendar
+                                .get(Calendar.MINUTE) + ")");
             } catch (ExecutionException e) {
                 views.setImageViewResource(com.example.pingapplication.R.id.widget_icon,
                                            com.example.pingapplication.R.drawable.rect_error);
@@ -114,13 +114,8 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                       e.getLocalizedMessage());
                 e.printStackTrace();
             }
-        } else {
-            views.setImageViewResource(com.example.pingapplication.R.id.widget_icon,
-                                       com.example.pingapplication.R.drawable.rect_no_connection);
-            views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
-                                  "n/a");
+            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override

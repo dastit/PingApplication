@@ -242,8 +242,6 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         Intent intent   = getActivity().getIntent();
         String hostName = intent.getStringExtra(EXTRA_HOST_NAME);
         if (hostName != null) {
-
-            //TODO: hostname is empty
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
             setIPV(hostName);
             params = "-c 3 ";
