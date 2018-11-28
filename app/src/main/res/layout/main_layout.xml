@@ -1,130 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/top_linear_layout"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/bottom_linear_layout"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onRadioButtonClicked"
-                android:text="@string/host_name_label_text" />
-
-            <RadioButton
-                android:id="@+id/radio_ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:onClick="onRadioButtonClicked"
-                android:text="@string/host_name_label_ip" />
-        </RadioGroup>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/hostNameWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:hint="@string/address_label">
-
-                <com.example.pingapplication.TextInputAutoCompleteTextView
-                    android:id="@+id/hostName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:singleLine="false"
-                    android:textAlignment="center" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <ImageButton
-                android:id="@+id/showCommandButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="@dimen/text_margin"
-                android:background="@null"
-                android:paddingTop="@dimen/text_margin"
-                android:src="@drawable/sharp_expand_more_24" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/pingCommandContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/pingType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd" />
-
-            <EditText
-                android:id="@+id/commandText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/text_margin"
-                android:layout_marginEnd="@dimen/text_margin"
-                android:layout_weight="4"
-                android:inputType="text|textNoSuggestions"
-                android:singleLine="false"
-                android:textAlignment="viewStart"
-                android:textSize="@dimen/text_size" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/connectionResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:scrollbars="vertical" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/bottom_linear_layout"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="PINGME" />
+    <fragment
+        android:id = "@+id/ping_fragment"
+        android:name="com.example.pingapplication.PingFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/pingButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/ping_button_label"
-            style="?android:attr/buttonBarButtonStyle" />
-
-        <Button
-            android:id="@+id/stopPingButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/stop_ping_button"
-            style="?android:attr/buttonBarButtonStyle" />
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent" />
+</LinearLayout>

@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.example.ping_widget">
+
+    <dist:module
+        dist:onDemand="true"
+        dist:title="@string/title_ping_widget">
+        <dist:fusing dist:include="true" />
+    </dist:module>
+    <application>
+        <activity android:name="com.example.ping_widget.PingWidgetConfigure">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+        <receiver android:name="com.example.ping_widget.PingWidgetProvider" android:previewImage="@drawable/appwidget_bg">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/ping_widget_info" />
+        </receiver>
+    </application>
+</manifest>
+

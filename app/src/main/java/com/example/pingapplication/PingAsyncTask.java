@@ -3,6 +3,7 @@ package com.example.pingapplication;
 import android.os.AsyncTask;
 import android.util.Log;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,8 +34,9 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
     protected String doInBackground(Void... voids) {
         Runtime runtime = Runtime.getRuntime();
         try {
-
-            mIpAddrProcess = runtime.exec(command + hostName);
+            String fullCommand = command + " -w 3 " + hostName;
+            Log.d(TAG, "doInBackground: "+fullCommand);
+            mIpAddrProcess = runtime.exec(fullCommand);
             String   pid            = "";
             String[] processDetails = mIpAddrProcess.toString().split(",");
             for (String part : processDetails) {
@@ -43,12 +45,13 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
                     break;
                 }
             }
-            BufferedReader bufferedReader;
-            String         line;
-            String         responceTime = NO_CONNECTION;
-            bufferedReader = new BufferedReader(
-                    new InputStreamReader(mIpAddrProcess.getInputStream()));
-            while ((line = bufferedReader.readLine()) != null) {
+            String      line;
+            String      responceTime = NO_CONNECTION;
+
+            InputStreamReader in = new InputStreamReader(mIpAddrProcess.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(in);
+            while ((line = bufferedReader.readLine())!=null ) {
+
                 Log.d(TAG, line + "\n");
                 int index = line.indexOf("time=");
                 if (index != -1) {
@@ -60,11 +63,12 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
                     lineAfterCancelation.append(line).append("\n");
                 }
             }
+            int code  = mIpAddrProcess.waitFor();
             return responceTime;
 
-//        } catch (InterruptedException ignore) {
-//            publishProgress(ignore.getLocalizedMessage());
-//            return -1F;
+        } catch (InterruptedException ignore) {
+            publishProgress(ignore.getLocalizedMessage());
+            return NO_CONNECTION;
         } catch (IOException e) {
             publishProgress(e.getLocalizedMessage());
             return NO_CONNECTION;
@@ -83,10 +87,12 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
 
         if (delegate != null && result.equals(NO_CONNECTION)) {
             try {
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(mIpAddrProcess.getErrorStream()));
-                String line;
+                InputStreamReader in = new InputStreamReader(mIpAddrProcess.getErrorStream());
+                BufferedReader bufferedReader = new BufferedReader(in);
+                Log.d(TAG, "onPostExecute: "+in.read());
+                String line = bufferedReader.readLine();
                 while ((line = bufferedReader.readLine()) != null) {
+                    Log.d(TAG, "onPostExecute: "+line);
                     delegate.fillConnectionResult(line + "\n");
                 }
             } catch (IOException e) {

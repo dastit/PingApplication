@@ -1,4 +1,4 @@
-package com.example.pingapplication;
+package com.example.ping_widget;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -11,10 +11,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+
+import com.example.pingapplication.TextInputAutoCompleteTextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,20 +43,45 @@ public class PingWidgetConfigure extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
-        setContentView(R.layout.widget_configure);
+        setContentView(com.example.pingapplication.R.layout.widget_configure);
 
-        hostNameWrapper = findViewById(R.id.wconfig_hostname_wrapper);
-        hostName = findViewById(R.id.wconfig_hostName);
-        shortHostNameWrapper = findViewById(R.id.wconfig_short_hostname_wrapper);
-        shortHostName = findViewById(R.id.wconfig_short_hostName);
+        hostNameWrapper = findViewById(com.example.pingapplication.R.id.wconfig_hostname_wrapper);
+        hostName = findViewById(com.example.pingapplication.R.id.wconfig_hostName);
 
-        updateRateWrapper = findViewById(R.id.wconfig_update_rate_wrapper);
-        updateRate = findViewById(R.id.wconfig_update_rate);
-        updateRateDim = findViewById(R.id.wconfig_update_rate_dimension);
-        saveButton = findViewById(R.id.wconfig_save_button);
+        shortHostNameWrapper = findViewById(
+                com.example.pingapplication.R.id.wconfig_short_hostname_wrapper);
+        shortHostName = findViewById(com.example.pingapplication.R.id.wconfig_short_hostName);
+
+        hostName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String shortHostName = PingWidgetConfigure.this.shortHostName.getText().toString();
+                if (shortHostName.isEmpty() || shortHostName.equals(
+                        s.subSequence(0, s.length() - 1).toString())
+                        && shortHostName.length() < 10) {
+                    PingWidgetConfigure.this.shortHostName.setText(s);
+                }
+            }
+        });
+        updateRateWrapper = findViewById(
+                com.example.pingapplication.R.id.wconfig_update_rate_wrapper);
+        updateRate = findViewById(com.example.pingapplication.R.id.wconfig_update_rate);
+        updateRateDim = findViewById(
+                com.example.pingapplication.R.id.wconfig_update_rate_dimension);
+        saveButton = findViewById(com.example.pingapplication.R.id.wconfig_save_button);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                                                                             R.array.update_rate_dims,
+                                                                             com.example.pingapplication.R.array.update_rate_dims,
                                                                              android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         updateRateDim.setAdapter(adapter);
@@ -93,7 +122,8 @@ public class PingWidgetConfigure extends Activity {
                 Calendar     calendar     = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 if (alarmManager != null) {
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), mUpdateRate, pendingIntent);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                              mUpdateRate, pendingIntent);
                 }
 
                 PingWidgetProvider.saveAlarmManager(alarmManager, pendingIntent);
@@ -109,7 +139,8 @@ public class PingWidgetConfigure extends Activity {
     private boolean isCorrect() {
         mHostName = hostName.getText().toString();
         if (mHostName.isEmpty()) {
-            hostNameWrapper.setError(getString(R.string.host_name_error));
+            hostNameWrapper.setError(
+                    getString(com.example.pingapplication.R.string.host_name_error));
             return false;
         }
         mShortHostName = shortHostName.getText().toString();
@@ -138,36 +169,41 @@ public class PingWidgetConfigure extends Activity {
 
     static void savePrefs(Context context, ArrayList<String> prefs, int widgetId) {
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                context.getString(R.string.preferences_name),
+                context.getString(com.example.pingapplication.R.string.preferences_name),
                 MODE_PRIVATE).edit();
-        editor.putString(context.getString(R.string.sp_name) + widgetId, prefs.get(0));
-        editor.putString(context.getString(R.string.sp_short_name) + widgetId, prefs.get(1));
-        editor.putInt(context.getString(R.string.sp_rate) + widgetId,
+        editor.putString(context.getString(com.example.pingapplication.R.string.sp_name) + widgetId,
+                         prefs.get(0));
+        editor.putString(
+                context.getString(com.example.pingapplication.R.string.sp_short_name) + widgetId,
+                prefs.get(1));
+        editor.putInt(context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId,
                       Integer.parseInt(prefs.get(2)));
         editor.apply();
     }
 
     static String loadHostName(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
-                context.getString(R.string.preferences_name),
+                context.getString(com.example.pingapplication.R.string.preferences_name),
                 MODE_PRIVATE);
         return sharedPreferences.getString(
-                context.getString(R.string.sp_name) + widgetId, "");
+                context.getString(com.example.pingapplication.R.string.sp_name) + widgetId, "");
     }
 
     static int loadUpdateRate(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
-                context.getString(R.string.preferences_name),
+                context.getString(com.example.pingapplication.R.string.preferences_name),
                 MODE_PRIVATE);
         return sharedPreferences.getInt(
-                context.getString(R.string.sp_rate) + widgetId, 86400000);
+                context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId,
+                86400000);
     }
 
     static String loadShortHostName(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
-                context.getString(R.string.preferences_name),
+                context.getString(com.example.pingapplication.R.string.preferences_name),
                 MODE_PRIVATE);
         return sharedPreferences.getString(
-                context.getString(R.string.sp_short_name) + widgetId, "N/A");
+                context.getString(com.example.pingapplication.R.string.sp_short_name) + widgetId,
+                "N/A");
     }
 }
