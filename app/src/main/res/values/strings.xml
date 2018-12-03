@@ -34,4 +34,5 @@
     <string name="no_module_found_error">Модуль не найден. Возможно вы не имеете к нему доступа.</string>
     <string name="ping_command_for_ipv4">/system/bin/ping</string>
     <string name="ping_command_for_ipv6">/system/bin/ping6</string>
+    <string name="text_for_deleted_item_adapter">удалено</string>
 </resources>

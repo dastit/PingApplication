@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textSize="13sp"
         android:textColor="@color/colorBlack"
         android:text="22.22 ms"/>
 

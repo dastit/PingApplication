@@ -1,14 +1,15 @@
 package com.example.pingapplication;
 
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,28 +43,18 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     private TextInputLayout               addressWrapper;
     private TextInputAutoCompleteTextView address;
     private Button                        pingButton;
-    private Button                        stopButton;
     private TextView                      connectionResult;
     private ImageButton                   showCommandButton;
     private LinearLayout                  commandContainer;
     private TextView                      commandPingType;
     private EditText                      commandText;
-    private RadioGroup                    radioGroup;
-    private RadioButton                   ipRadioButton;
-    private RadioButton                   nameRadioButton;
 
-    private String        command;
-    private String        params;
-    private PingAsyncTask pingTask;
+    private String           command;
+    private String           params;
+    private PingAsyncTask    pingTask;
+    private FragmentActivity parentActivity;
 
     public PingFragment() {
-    }
-
-    public static PingFragment newInstance() {
-        PingFragment fragment = new PingFragment();
-        Bundle       args     = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -74,30 +64,29 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.ping_fragment_layout, container, false);
 
         //Creating adapter for inserted values
-        final HostNameDatabase database = Room.databaseBuilder(getActivity(),
-                                                               HostNameDatabase.class,
-                                                               "Host_name_database")
-                                              .allowMainThreadQueries().build();
+        parentActivity = getActivity();
+
+        final HostNameDatabase database = HostNameDatabase.getInstance(
+                parentActivity.getApplicationContext());
+
         ArrayList<String> savedNames = new ArrayList<>();
         for (HostName name : database.hostNameDao().getAll()) {
             savedNames.add(name.getName());
         }
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                                                                android.R.layout
-                                                                        .simple_dropdown_item_1line,
-                                                                savedNames);
+        final RemovableItemArrayAdapter<String> adapter = new RemovableItemArrayAdapter<>(
+                parentActivity, R.layout.removable_dropdown_item, R.id.adapter_text, savedNames);
 
         addressWrapper = v.findViewById(R.id.hostNameWrapper);
         address = v.findViewById(R.id.hostName);
         address.setInputType(
                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
         address.setKeyListener(DigitsKeyListener.getInstance("0123456789.:"));
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+        final InputMethodManager imm = (InputMethodManager) parentActivity.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -144,7 +133,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         address.setThreshold(1);
         address.setAdapter(adapter);
         pingButton = v.findViewById(R.id.pingButton);
-        stopButton = v.findViewById(R.id.stopPingButton);
+        Button stopButton = v.findViewById(R.id.stopPingButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,14 +188,17 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
                     return;
                 }
                 ConnectivityManager cm =
-                        (ConnectivityManager) getActivity().getSystemService(
+                        (ConnectivityManager) parentActivity.getSystemService(
                                 Context.CONNECTIVITY_SERVICE);
 
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                NetworkInfo activeNetwork = null;
+                if (cm != null) {
+                    activeNetwork = cm.getActiveNetworkInfo();
+                }
                 boolean isConnected = activeNetwork != null && activeNetwork
                         .isConnected();
                 if (!isConnected) {
-                    connectionResult.setText(getActivity().getString(R.string.no_internet_error));
+                    connectionResult.setText(parentActivity.getString(R.string.no_internet_error));
                     return;
                 }
                 connectionResult.setText("");
@@ -234,18 +226,24 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
             }
         });
 
-        radioGroup = v.findViewById(R.id.radio_group_name_or_ip);
-        ipRadioButton = v.findViewById(R.id.radio_ip);
-        nameRadioButton = v.findViewById(R.id.radio_name);
+        RadioGroup  radioGroup      = v.findViewById(R.id.radio_group_name_or_ip);
+        RadioButton ipRadioButton   = v.findViewById(R.id.radio_ip);
+        RadioButton nameRadioButton = v.findViewById(R.id.radio_name);
         radioGroup.setOnCheckedChangeListener(this);
 
-        Intent intent   = getActivity().getIntent();
+        //if fragment (Activity) started from widget
+        Intent intent   = parentActivity.getIntent();
         String hostName = intent.getStringExtra(EXTRA_HOST_NAME);
         if (hostName != null) {
+            //TODO:update widget
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
             setIPV(hostName);
             params = "-c 3 ";
-            nameRadioButton.setChecked(true);
+            if (hostName.matches("[0-9:.]+")) {
+                ipRadioButton.setChecked(true);
+            } else {
+                nameRadioButton.setChecked(true);
+            }
             address.setText(hostName);
             pingButton.performClick();
             address.clearFocus();

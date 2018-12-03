@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -56,7 +57,10 @@ public class PingWidgetProvider extends AppWidgetProvider {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
         boolean isConnected = activeNetwork != null && activeNetwork
                 .isConnected();
 
@@ -68,7 +72,11 @@ public class PingWidgetProvider extends AppWidgetProvider {
 
             //Sets opening Main Activity on click on widget
             Intent intent = new Intent(context, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            } else {
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            }
             intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             intent.putExtra(EXTRA_HOST_NAME, hostName);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
@@ -98,9 +106,9 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                                com.example.pingapplication.R.drawable.rect_ok);
                 }
                 views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
-                                      pingTask.get()+ " (" + calendar.get(
-                                Calendar.HOUR_OF_DAY) + ":" + calendar
-                                .get(Calendar.MINUTE) + ")");
+                                      pingTask.get() + " (" + calendar.get(
+                                              Calendar.HOUR_OF_DAY) + ":" + calendar
+                                              .get(Calendar.MINUTE) + ")");
             } catch (ExecutionException e) {
                 views.setImageViewResource(com.example.pingapplication.R.id.widget_icon,
                                            com.example.pingapplication.R.drawable.rect_error);

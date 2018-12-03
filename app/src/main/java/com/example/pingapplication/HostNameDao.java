@@ -15,6 +15,6 @@ public interface HostNameDao {
     @Insert
     void insertAll(HostName... names);
 
-    @Delete
-    void delete(HostName name);
+    @Query ("DELETE from HostName where name= :name")
+    void delete(String name);
 }
