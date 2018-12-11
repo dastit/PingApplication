@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="host_name_too_long_widget_error">Слишком длинный заголовок, влезает не более 10 символов</string>
+    <string name="frequent_update_warning">Установка обновления чаще, чем 1 раз в час, приводит к большему расходу батареи</string>
+    <string name="wrong_update_rate_error">Поле должно содержать числовое значение</string>
+<string name="alert_title">Внимание!</string>
+</resources>

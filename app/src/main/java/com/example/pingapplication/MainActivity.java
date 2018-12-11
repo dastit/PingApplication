@@ -1,6 +1,8 @@
 package com.example.pingapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG         = "MainActivity";
     public static final  String PING_WIDGET = "ping_widget";
 
+    public PingFragment pingFragment;
+
     private SplitInstallManager splitInstallManager;
     private int                 sessionId = 0;
 
@@ -37,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FragmentManager fm = getSupportFragmentManager();
+        pingFragment = PingFragment.newInstance();
+        fm.beginTransaction().add(R.id.fragment_container, pingFragment).commit();
 
         splitInstallManager = SplitInstallManagerFactory.create(getApplicationContext());
     }
@@ -135,5 +143,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        pingFragment.startFromIntent(intent);
+    }
 }

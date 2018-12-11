@@ -18,7 +18,7 @@
     <string name="sp_name">shared_name</string>
     <string name="sp_short_name">shared_short_name</string>
     <string name="sp_rate">shared_rate</string>
-    <string name="short_address_label">Краткий заголовок</string>
+    <string name="short_address_label">Краткий заголовок (необязательно)</string>
 
 
     <string-array name="update_rate_dims">

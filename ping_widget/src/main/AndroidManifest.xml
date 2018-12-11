@@ -13,7 +13,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-        <receiver android:name="com.example.ping_widget.PingWidgetProvider" android:previewImage="@drawable/appwidget_bg">
+        <receiver android:name="com.example.ping_widget.PingWidgetProvider" android:previewImage="@drawable/ping_widget_preview">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

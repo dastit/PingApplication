@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -25,8 +24,9 @@ import static com.example.pingapplication.PingFragment.EXTRA_HOST_NAME;
 
 public class PingWidgetProvider extends AppWidgetProvider {
 
-    public static final  String MY_WIDGET_UPDATE = "update";
-    private static final String TAG              = "PingWidgetProvider";
+    public static final  String MY_WIDGET_UPDATE      = "update";
+    public static final  String WIDGET_IDS_FOR_UPDATE = "widget ids for update";
+    private static final String TAG                   = "PingWidgetProvider";
 
     static AlarmManager  myAlarmManager;
     static PendingIntent myPendingIntent;
@@ -36,6 +36,7 @@ public class PingWidgetProvider extends AppWidgetProvider {
         myPendingIntent = pendingIntent;
     }
 
+
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             String hostName = PingWidgetConfigure.loadHostName(context,
@@ -44,11 +45,13 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                                                 appWidgetId);
             String shortHostName = PingWidgetConfigure.loadShortHostName(context,
                                                                          appWidgetId);
-            ArrayList<String> prefs = new ArrayList<>();
-            prefs.add(hostName);
-            prefs.add(shortHostName);
-            prefs.add(String.valueOf(updateRate));
-            updateWidget(context, appWidgetManager, appWidgetId, prefs);
+            if (!hostName.equals("") && !shortHostName.equals("")) {
+                ArrayList<String> prefs = new ArrayList<>();
+                prefs.add(hostName);
+                prefs.add(shortHostName);
+                prefs.add(String.valueOf(updateRate));
+                updateWidget(context, appWidgetManager, appWidgetId, prefs);
+            }
         }
     }
 
@@ -72,14 +75,8 @@ public class PingWidgetProvider extends AppWidgetProvider {
 
             //Sets opening Main Activity on click on widget
             Intent intent = new Intent(context, MainActivity.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-            } else {
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             intent.putExtra(EXTRA_HOST_NAME, hostName);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent,
                                                                     PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(com.example.pingapplication.R.id.widget_view,
                                           pendingIntent);
@@ -106,22 +103,23 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                                com.example.pingapplication.R.drawable.rect_ok);
                 }
                 views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
-                                      pingTask.get() + " (" + calendar.get(
-                                              Calendar.HOUR_OF_DAY) + ":" + calendar
-                                              .get(Calendar.MINUTE) + ")");
+                                      String.format("%s (%s:%s)", pingTask.get(),
+                                                    addZero(calendar.get(Calendar.HOUR_OF_DAY)),
+                                                    addZero(calendar.get(Calendar.MINUTE))));
             } catch (ExecutionException e) {
                 views.setImageViewResource(com.example.pingapplication.R.id.widget_icon,
                                            com.example.pingapplication.R.drawable.rect_error);
                 views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
                                       e.getLocalizedMessage());
-                e.printStackTrace();
+                Log.e(TAG, "updateWidget: ExecutionException", e);;
             } catch (InterruptedException e) {
                 views.setImageViewResource(com.example.pingapplication.R.id.widget_icon,
                                            com.example.pingapplication.R.drawable.rect_error);
                 views.setTextViewText(com.example.pingapplication.R.id.widget_responce_time,
                                       e.getLocalizedMessage());
-                e.printStackTrace();
+                Log.e(TAG, "updateWidget: InterruptedException", e);;
             }
+
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
@@ -135,6 +133,23 @@ public class PingWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        super.onDeleted(context, appWidgetIds);
+
+        //delete update alarm
+        if (myPendingIntent != null) {
+            myAlarmManager.cancel(myPendingIntent);
+        }
+
+        //delete saved information from SharedPreferences
+        for (int appWidgetId : appWidgetIds) {
+            PingWidgetConfigure.deletePrefs(context, appWidgetId);
+        }
+    }
+
+    //TODO: add saving and deleting ids in shared prefs, delete old ids from phon
+
+    @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (MY_WIDGET_UPDATE.equals(intent.getAction())) {
@@ -144,10 +159,19 @@ public class PingWidgetProvider extends AppWidgetProvider {
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
                 ComponentName thisAppWidget = new ComponentName(context.getPackageName(),
                                                                 PingWidgetProvider.class.getName());
-                int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
-
+                //int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+                int[] appWidgetIds = new int[1];
+                appWidgetIds[0] = extras.getInt(WIDGET_IDS_FOR_UPDATE);
                 onUpdate(context, appWidgetManager, appWidgetIds);
             }
         }
+    }
+
+    private static String addZero(int value) {
+        String result = String.valueOf(value);
+        if (value < 10) {
+            result = "0" + result;
+        }
+        return result;
     }
 }

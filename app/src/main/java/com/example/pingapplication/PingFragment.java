@@ -48,6 +48,8 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     private LinearLayout                  commandContainer;
     private TextView                      commandPingType;
     private EditText                      commandText;
+    private RadioButton                   ipRadioButton;
+    private RadioButton                   nameRadioButton;
 
     private String           command;
     private String           params;
@@ -55,6 +57,11 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     private FragmentActivity parentActivity;
 
     public PingFragment() {
+    }
+
+    public static PingFragment newInstance() {
+        PingFragment fragment = new PingFragment();
+        return fragment;
     }
 
     @Override
@@ -226,14 +233,16 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
             }
         });
 
-        RadioGroup  radioGroup      = v.findViewById(R.id.radio_group_name_or_ip);
-        RadioButton ipRadioButton   = v.findViewById(R.id.radio_ip);
-        RadioButton nameRadioButton = v.findViewById(R.id.radio_name);
+        RadioGroup radioGroup = v.findViewById(R.id.radio_group_name_or_ip);
+        ipRadioButton = v.findViewById(R.id.radio_ip);
+        nameRadioButton = v.findViewById(R.id.radio_name);
         radioGroup.setOnCheckedChangeListener(this);
 
-        //if fragment (Activity) started from widget
-        Intent intent   = parentActivity.getIntent();
-        String hostName = intent.getStringExtra(EXTRA_HOST_NAME);
+        return v;
+    }
+
+    public void startFromIntent(Intent intent) {
+        String      hostName        = intent.getStringExtra(EXTRA_HOST_NAME);
         if (hostName != null) {
             //TODO:update widget
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
@@ -248,8 +257,8 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
             pingButton.performClick();
             address.clearFocus();
         }
-        return v;
     }
+
 
     private void setIPV(String hostName) {
         if (hostName.contains(":")) {

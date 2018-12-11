@@ -2,9 +2,11 @@ package com.example.ping_widget;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -47,37 +50,35 @@ public class PingWidgetConfigure extends Activity {
 
         hostNameWrapper = findViewById(com.example.pingapplication.R.id.wconfig_hostname_wrapper);
         hostName = findViewById(com.example.pingapplication.R.id.wconfig_hostName);
+        hostName.requestFocus();
 
         shortHostNameWrapper = findViewById(
                 com.example.pingapplication.R.id.wconfig_short_hostname_wrapper);
         shortHostName = findViewById(com.example.pingapplication.R.id.wconfig_short_hostName);
 
-        hostName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String shortHostName = PingWidgetConfigure.this.shortHostName.getText().toString();
-                if (shortHostName.isEmpty() || shortHostName.equals(
-                        s.subSequence(0, s.length() - 1).toString())
-                        && shortHostName.length() < 10) {
-                    PingWidgetConfigure.this.shortHostName.setText(s);
-                }
-            }
-        });
         updateRateWrapper = findViewById(
                 com.example.pingapplication.R.id.wconfig_update_rate_wrapper);
         updateRate = findViewById(com.example.pingapplication.R.id.wconfig_update_rate);
         updateRateDim = findViewById(
                 com.example.pingapplication.R.id.wconfig_update_rate_dimension);
+        updateRateDim.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position!=0)//not an hour
+                {
+                    updateRateWrapper.setError(getString(R.string.frequent_update_warning));
+                }else{
+                    updateRateWrapper.setError("");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         saveButton = findViewById(com.example.pingapplication.R.id.wconfig_save_button);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -116,6 +117,9 @@ public class PingWidgetConfigure extends Activity {
 
                 Intent intent = new Intent(PingWidgetConfigure.this, PingWidgetProvider.class);
                 intent.setAction(PingWidgetProvider.MY_WIDGET_UPDATE);
+//                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                int[] mAppWidgetIds = new int[]{mAppWidgetId};
+                intent.putExtra(PingWidgetProvider.WIDGET_IDS_FOR_UPDATE, mAppWidgetId);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(PingWidgetConfigure.this,
                                                                          0, intent, 0);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -145,23 +149,25 @@ public class PingWidgetConfigure extends Activity {
         }
         mShortHostName = shortHostName.getText().toString();
         if (mShortHostName.isEmpty()) {
-            shortHostNameWrapper.setError("Укажите краткий заголовок для виджета");
-            return false;
+            mShortHostName = mHostName;
+            shortHostName.setText(mHostName);
         }
         if (mShortHostName.length() > 10) {
-            shortHostNameWrapper.setError("Слишком длинный заголовок, влезает не более " +
-                                                  "10 символов");
+            shortHostNameWrapper.setError(getString(R.string.host_name_too_long_widget_error));
             return false;
         }
         try {
             mUpdateRate = Integer.valueOf(updateRate.getText().toString()) * 1000;
-            if (updateRateDim.getSelectedItemPosition() == 0) {
+            if (updateRateDim.getSelectedItemPosition() == 0) //hour
+            {
                 mUpdateRate = mUpdateRate * 60 * 60;
-            } else if (updateRateDim.getSelectedItemPosition() == 1) {
+            } else if (updateRateDim.getSelectedItemPosition() == 1) //minutes
+            {
                 mUpdateRate = mUpdateRate * 60;
             }
+
         } catch (NumberFormatException | NullPointerException e) {
-            updateRateWrapper.setError("Поле должно содержать числовое значение");
+            updateRateWrapper.setError(getString(R.string.wrong_update_rate_error));
             return false;
         }
         return true;
@@ -205,5 +211,17 @@ public class PingWidgetConfigure extends Activity {
         return sharedPreferences.getString(
                 context.getString(com.example.pingapplication.R.string.sp_short_name) + widgetId,
                 "N/A");
+    }
+
+    static void deletePrefs(Context context, int widgetId) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                context.getString(com.example.pingapplication.R.string.preferences_name),
+                MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(context.getString(com.example.pingapplication.R.string.sp_short_name) +
+                              widgetId);
+        editor.remove(context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId);
+        editor.remove(context.getString(com.example.pingapplication.R.string.sp_name) + widgetId);
+        editor.apply();
     }
 }
