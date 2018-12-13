@@ -26,6 +26,9 @@ import com.example.pingapplication.TextInputAutoCompleteTextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.example.pingapplication.PingFragment.EXTRA_WIDGET_IDS_FOR_UPDATE;
+import static com.example.pingapplication.PingFragment.MY_WIDGET_UPDATE_ACTION;
+
 public class PingWidgetConfigure extends Activity {
     private TextInputLayout               hostNameWrapper;
     private TextInputAutoCompleteTextView hostName;
@@ -116,10 +119,8 @@ public class PingWidgetConfigure extends Activity {
                 PingWidgetProvider.updateWidget(context, appWidgetManager, mAppWidgetId, prefs);
 
                 Intent intent = new Intent(PingWidgetConfigure.this, PingWidgetProvider.class);
-                intent.setAction(PingWidgetProvider.MY_WIDGET_UPDATE);
-//                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                int[] mAppWidgetIds = new int[]{mAppWidgetId};
-                intent.putExtra(PingWidgetProvider.WIDGET_IDS_FOR_UPDATE, mAppWidgetId);
+                intent.setAction(MY_WIDGET_UPDATE_ACTION);
+                intent.putExtra(EXTRA_WIDGET_IDS_FOR_UPDATE, mAppWidgetId);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(PingWidgetConfigure.this,
                                                                          0, intent, 0);
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

@@ -1,6 +1,7 @@
 package com.example.pingapplication;
 
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -37,8 +39,12 @@ import static android.os.AsyncTask.Status.RUNNING;
 
 public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate,
                                                       RadioGroup.OnCheckedChangeListener {
-    public static final String TAG             = "PingFragment";
-    public static final String EXTRA_HOST_NAME = "host_name";
+    public static final String TAG                         = "PingFragment";
+    public static final String EXTRA_HOST_NAME             = "host_name";
+    public static final String EXTRA_WIDGET_ID             = "widget_id";
+    public static final String EXTRA_WIDGET_IDS_FOR_UPDATE = "widget ids for update";
+    public static final String MY_WIDGET_UPDATE_ACTION     = "update";
+
 
     private TextInputLayout               addressWrapper;
     private TextInputAutoCompleteTextView address;
@@ -242,9 +248,25 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     }
 
     public void startFromIntent(Intent intent) {
-        String      hostName        = intent.getStringExtra(EXTRA_HOST_NAME);
+        String hostName = null;
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            hostName = intent.getData().getLastPathSegment();
+        } else {
+            hostName = intent.getStringExtra(EXTRA_HOST_NAME);
+        }
+        int widgetId = intent.getIntExtra(EXTRA_WIDGET_ID, -1);
         if (hostName != null) {
-            //TODO:update widget
+            if (widgetId != -1) {
+                Intent updateIntent = new Intent();
+                updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                int[] appWidgetIds = new int[1];
+                appWidgetIds[0] =widgetId;
+                updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+                updateIntent.setPackage("com.example.ping_widget");
+
+                getActivity().sendBroadcast(updateIntent);
+            }
+
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
             setIPV(hostName);
             params = "-c 3 ";

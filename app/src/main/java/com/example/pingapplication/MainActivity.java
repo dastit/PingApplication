@@ -1,6 +1,7 @@
 package com.example.pingapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().add(R.id.fragment_container, pingFragment).commit();
 
         splitInstallManager = SplitInstallManagerFactory.create(getApplicationContext());
+
+        // ATTENTION: This was auto-generated to handle app links.
+        Intent appLinkIntent = getIntent();
+
+        if(appLinkIntent.getData()!=null){
+            pingFragment.startFromIntent(appLinkIntent);
+        }
     }
 
 

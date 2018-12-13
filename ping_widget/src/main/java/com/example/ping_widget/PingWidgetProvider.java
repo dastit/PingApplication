@@ -21,11 +21,12 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.pingapplication.PingFragment.EXTRA_HOST_NAME;
+import static com.example.pingapplication.PingFragment.EXTRA_WIDGET_ID;
+import static com.example.pingapplication.PingFragment.MY_WIDGET_UPDATE_ACTION;
+import static com.example.pingapplication.PingFragment.EXTRA_WIDGET_IDS_FOR_UPDATE;
 
 public class PingWidgetProvider extends AppWidgetProvider {
 
-    public static final  String MY_WIDGET_UPDATE      = "update";
-    public static final  String WIDGET_IDS_FOR_UPDATE = "widget ids for update";
     private static final String TAG                   = "PingWidgetProvider";
 
     static AlarmManager  myAlarmManager;
@@ -76,6 +77,7 @@ public class PingWidgetProvider extends AppWidgetProvider {
             //Sets opening Main Activity on click on widget
             Intent intent = new Intent(context, MainActivity.class);
             intent.putExtra(EXTRA_HOST_NAME, hostName);
+            intent.putExtra(EXTRA_WIDGET_ID, appWidgetId);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent,
                                                                     PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(com.example.pingapplication.R.id.widget_view,
@@ -152,7 +154,7 @@ public class PingWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (MY_WIDGET_UPDATE.equals(intent.getAction())) {
+        if (MY_WIDGET_UPDATE_ACTION.equals(intent.getAction())) {
             Log.d(TAG, "onReceive: " + System.currentTimeMillis());
             Bundle extras = intent.getExtras();
             if (extras != null) {
@@ -161,7 +163,7 @@ public class PingWidgetProvider extends AppWidgetProvider {
                                                                 PingWidgetProvider.class.getName());
                 //int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
                 int[] appWidgetIds = new int[1];
-                appWidgetIds[0] = extras.getInt(WIDGET_IDS_FOR_UPDATE);
+                appWidgetIds[0] = extras.getInt(EXTRA_WIDGET_IDS_FOR_UPDATE);
                 onUpdate(context, appWidgetManager, appWidgetIds);
             }
         }
