@@ -1,20 +1,14 @@
 package com.example.ping_widget;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,10 +18,6 @@ import android.widget.Spinner;
 import com.example.pingapplication.TextInputAutoCompleteTextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-
-import static com.example.pingapplication.PingFragment.EXTRA_WIDGET_IDS_FOR_UPDATE;
-import static com.example.pingapplication.PingFragment.MY_WIDGET_UPDATE_ACTION;
 
 public class PingWidgetConfigure extends Activity {
     private TextInputLayout               hostNameWrapper;
@@ -43,7 +33,7 @@ public class PingWidgetConfigure extends Activity {
 
     private String mHostName;
     private String mShortHostName;
-    private int    mUpdateRate;
+    private long   mUpdateRate;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +49,6 @@ public class PingWidgetConfigure extends Activity {
                 com.example.pingapplication.R.id.wconfig_short_hostname_wrapper);
         shortHostName = findViewById(com.example.pingapplication.R.id.wconfig_short_hostName);
 
-
         updateRateWrapper = findViewById(
                 com.example.pingapplication.R.id.wconfig_update_rate_wrapper);
         updateRate = findViewById(com.example.pingapplication.R.id.wconfig_update_rate);
@@ -69,10 +58,10 @@ public class PingWidgetConfigure extends Activity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position!=0)//not an hour
+                if (position != 0)//not an hour
                 {
                     updateRateWrapper.setError(getString(R.string.frequent_update_warning));
-                }else{
+                } else {
                     updateRateWrapper.setError("");
                 }
             }
@@ -118,20 +107,24 @@ public class PingWidgetConfigure extends Activity {
                 savePrefs(PingWidgetConfigure.this, prefs, mAppWidgetId);
                 PingWidgetProvider.updateWidget(context, appWidgetManager, mAppWidgetId, prefs);
 
-                Intent intent = new Intent(PingWidgetConfigure.this, PingWidgetProvider.class);
-                intent.setAction(MY_WIDGET_UPDATE_ACTION);
-                intent.putExtra(EXTRA_WIDGET_IDS_FOR_UPDATE, mAppWidgetId);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(PingWidgetConfigure.this,
-                                                                         0, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                Calendar     calendar     = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                if (alarmManager != null) {
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                                              mUpdateRate, pendingIntent);
-                }
-
-                PingWidgetProvider.saveAlarmManager(alarmManager, pendingIntent);
+//                Intent intent = new Intent(PingWidgetConfigure.this, PingWidgetProvider.class);
+////                intent.setAction(MY_WIDGET_UPDATE_ACTION);
+////                intent.putExtra(EXTRA_WIDGET_IDS_FOR_UPDATE, mAppWidgetId);
+//                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//                int [] appWidgetIds = new int []{mAppWidgetId};
+//                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast(PingWidgetConfigure.this,
+//                                                                         0, intent, 0);
+//                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                Calendar     calendar     = Calendar.getInstance();
+//                // calendar.setTimeInMillis(System.currentTimeMillis());
+//                if (alarmManager != null) {
+//                    alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                                              SystemClock.elapsedRealtime() + mUpdateRate,
+//                                              mUpdateRate, pendingIntent);
+//                }
+//
+//                PingWidgetProvider.saveAlarmManager(alarmManager, pendingIntent);
 
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -158,7 +151,7 @@ public class PingWidgetConfigure extends Activity {
             return false;
         }
         try {
-            mUpdateRate = Integer.valueOf(updateRate.getText().toString()) * 1000;
+            mUpdateRate = Long.valueOf(updateRate.getText().toString()) * 1000;
             if (updateRateDim.getSelectedItemPosition() == 0) //hour
             {
                 mUpdateRate = mUpdateRate * 60 * 60;
@@ -166,7 +159,6 @@ public class PingWidgetConfigure extends Activity {
             {
                 mUpdateRate = mUpdateRate * 60;
             }
-
         } catch (NumberFormatException | NullPointerException e) {
             updateRateWrapper.setError(getString(R.string.wrong_update_rate_error));
             return false;
@@ -183,8 +175,8 @@ public class PingWidgetConfigure extends Activity {
         editor.putString(
                 context.getString(com.example.pingapplication.R.string.sp_short_name) + widgetId,
                 prefs.get(1));
-        editor.putInt(context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId,
-                      Integer.parseInt(prefs.get(2)));
+        editor.putLong(context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId,
+                       Long.parseLong(prefs.get(2)));
         editor.apply();
     }
 
@@ -196,11 +188,11 @@ public class PingWidgetConfigure extends Activity {
                 context.getString(com.example.pingapplication.R.string.sp_name) + widgetId, "");
     }
 
-    static int loadUpdateRate(Context context, int widgetId) {
+    static long loadUpdateRate(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 context.getString(com.example.pingapplication.R.string.preferences_name),
                 MODE_PRIVATE);
-        return sharedPreferences.getInt(
+        return sharedPreferences.getLong(
                 context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId,
                 86400000);
     }

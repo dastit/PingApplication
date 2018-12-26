@@ -89,8 +89,7 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
             try {
                 InputStreamReader in = new InputStreamReader(mIpAddrProcess.getErrorStream());
                 BufferedReader bufferedReader = new BufferedReader(in);
-                Log.d(TAG, "onPostExecute: "+in.read());
-                String line = bufferedReader.readLine();
+                String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     Log.d(TAG, "onPostExecute: "+line);
                     delegate.fillConnectionResult(line + "\n");

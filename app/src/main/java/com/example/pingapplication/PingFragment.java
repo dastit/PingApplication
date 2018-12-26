@@ -1,7 +1,6 @@
 package com.example.pingapplication;
 
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -43,7 +41,6 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     public static final String EXTRA_HOST_NAME             = "host_name";
     public static final String EXTRA_WIDGET_ID             = "widget_id";
     public static final String EXTRA_WIDGET_IDS_FOR_UPDATE = "widget ids for update";
-    public static final String MY_WIDGET_UPDATE_ACTION     = "update";
 
 
     private TextInputLayout               addressWrapper;
@@ -91,8 +88,15 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         for (HostName name : database.hostNameDao().getAll()) {
             savedNames.add(name.getName());
         }
-        final RemovableItemArrayAdapter<String> adapter = new RemovableItemArrayAdapter<>(
-                parentActivity, R.layout.removable_dropdown_item, R.id.adapter_text, savedNames);
+
+
+        final RemovableItemArrayAdapter<String> adapter = new RemovableItemArrayAdapter<String>(
+                parentActivity, R.layout.removable_dropdown_item, R.id.adapter_text, savedNames) {
+            @Override
+            public void onClick(View v) {
+                address.setText(((TextView) v).getText());
+            }
+        };
 
         addressWrapper = v.findViewById(R.id.hostNameWrapper);
         address = v.findViewById(R.id.hostName);
@@ -111,6 +115,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
                 }
             }
         });
+
         address.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -145,6 +150,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         });
         address.setThreshold(1);
         address.setAdapter(adapter);
+
         pingButton = v.findViewById(R.id.pingButton);
         Button stopButton = v.findViewById(R.id.stopPingButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -222,15 +228,16 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
                     address.requestFocus();
                     return;
                 }
-
-                if (adapter.getPosition(hostName.trim()) == -1) {
+                String hostnameWithoutBlanks = hostName.trim();
+                if (adapter.getPosition(hostnameWithoutBlanks) == -1
+                        && database.hostNameDao().get(hostnameWithoutBlanks) == null) {
                     database.hostNameDao().insertAll(new HostName(hostName));
                     adapter.insert(hostName, adapter.getCount());
+                    adapter.notifyDataSetChanged();
                     address.setAdapter(adapter);
                 }
 
                 address.clearFocus();
-                address.setClickable(false);
                 connectionResult.requestFocus();
                 commandContainer.setVisibility(View.GONE);
                 String finalCommand = command + " " + params + " ";
@@ -244,6 +251,11 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         nameRadioButton = v.findViewById(R.id.radio_name);
         radioGroup.setOnCheckedChangeListener(this);
 
+
+        Intent intent = getActivity().getIntent();
+        if(intent!=null && intent.getExtras()!=null){
+            startFromIntent(intent);
+        }
         return v;
     }
 
@@ -254,22 +266,10 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
         } else {
             hostName = intent.getStringExtra(EXTRA_HOST_NAME);
         }
-        int widgetId = intent.getIntExtra(EXTRA_WIDGET_ID, -1);
         if (hostName != null) {
-            if (widgetId != -1) {
-                Intent updateIntent = new Intent();
-                updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                int[] appWidgetIds = new int[1];
-                appWidgetIds[0] =widgetId;
-                updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-                updateIntent.setPackage("com.example.ping_widget");
-
-                getActivity().sendBroadcast(updateIntent);
-            }
-
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
             setIPV(hostName);
-            params = "-c 3 ";
+            params = "-c 1 ";
             if (hostName.matches("[0-9:.]+")) {
                 ipRadioButton.setChecked(true);
             } else {
@@ -278,6 +278,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
             address.setText(hostName);
             pingButton.performClick();
             address.clearFocus();
+            params = "";
         }
     }
 

@@ -10,14 +10,18 @@
     <application>
         <activity android:name="com.example.ping_widget.PingWidgetConfigure">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.example.ping_widget.PingWidgetProvider" android:previewImage="@drawable/ping_widget_preview">
+        <receiver
+            android:name="com.example.ping_widget.PingWidgetProvider"
+            android:previewImage="@drawable/ping_widget_preview">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/ping_widget_info" />
         </receiver>
     </application>

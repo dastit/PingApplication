@@ -12,16 +12,12 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="PINGME" />
+        app:title="Ping me" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fragment_container">
 
     </FrameLayout>
-    <!--<fragment-->
-        <!--android:id = "@+id/ping_fragment"-->
-        <!--android:name="com.example.pingapplication.PingFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+
 </LinearLayout>

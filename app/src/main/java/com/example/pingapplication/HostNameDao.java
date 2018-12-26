@@ -12,6 +12,9 @@ public interface HostNameDao {
     @Query("SELECT * FROM HostName")
     List<HostName> getAll();
 
+    @Query("SELECT * FROM HostName where name = :name")
+    HostName get(String name);
+
     @Insert
     void insertAll(HostName... names);
 
