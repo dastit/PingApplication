@@ -40,7 +40,6 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     public static final String TAG                         = "PingFragment";
     public static final String EXTRA_HOST_NAME             = "host_name";
     public static final String EXTRA_WIDGET_ID             = "widget_id";
-    public static final String EXTRA_WIDGET_IDS_FOR_UPDATE = "widget ids for update";
 
 
     private TextInputLayout               addressWrapper;
@@ -63,8 +62,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     }
 
     public static PingFragment newInstance() {
-        PingFragment fragment = new PingFragment();
-        return fragment;
+        return new PingFragment();
     }
 
     @Override
@@ -260,7 +258,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     }
 
     public void startFromIntent(Intent intent) {
-        String hostName = null;
+        String hostName;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             hostName = intent.getData().getLastPathSegment();
         } else {

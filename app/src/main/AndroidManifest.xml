@@ -21,7 +21,6 @@
             android:launchMode="singleTop">
 
             <tools:validation testUrl="http://www.pingme.com/ping" />
-            <tools:validation testUrl="http://www.pingme.com/ping" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

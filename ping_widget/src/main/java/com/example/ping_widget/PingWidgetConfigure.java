@@ -2,13 +2,17 @@ package com.example.ping_widget;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,16 +22,18 @@ import android.widget.Spinner;
 import com.example.pingapplication.TextInputAutoCompleteTextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PingWidgetConfigure extends Activity {
-    private TextInputLayout               hostNameWrapper;
-    private TextInputAutoCompleteTextView hostName;
-    private TextInputLayout               shortHostNameWrapper;
-    private TextInputAutoCompleteTextView shortHostName;
-    private TextInputLayout               updateRateWrapper;
-    private TextInputEditText             updateRate;
-    private Spinner                       updateRateDim;
-    private Button                        saveButton;
+    private static final String                        TAG = "PingWidgetConfigure";
+    private              TextInputLayout               hostNameWrapper;
+    private              TextInputAutoCompleteTextView hostName;
+    private              TextInputLayout               shortHostNameWrapper;
+    private              TextInputAutoCompleteTextView shortHostName;
+    private              TextInputLayout               updateRateWrapper;
+    private              TextInputEditText             updateRate;
+    private              Spinner                       updateRateDim;
+    private              Button                        autoStartButton;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
@@ -71,7 +77,16 @@ public class PingWidgetConfigure extends Activity {
 
             }
         });
-        saveButton = findViewById(com.example.pingapplication.R.id.wconfig_save_button);
+
+        autoStartButton = findViewById(R.id.autostart_button);
+        autoStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addAutoStartup();
+            }
+        });
+
+        Button saveButton = findViewById(com.example.pingapplication.R.id.wconfig_save_button);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                                                                              com.example.pingapplication.R.array.update_rate_dims,
@@ -216,5 +231,37 @@ public class PingWidgetConfigure extends Activity {
         editor.remove(context.getString(com.example.pingapplication.R.string.sp_rate) + widgetId);
         editor.remove(context.getString(com.example.pingapplication.R.string.sp_name) + widgetId);
         editor.apply();
+    }
+
+    private void addAutoStartup() {
+
+        try {
+            Intent intent       = new Intent();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.miui.securitycenter",
+                                                      "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.coloros.safecenter",
+                                                      "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.vivo.permissionmanager",
+                                                      "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe",
+                                                      "com.letv.android.letvsafe.AutobootManageActivity"));
+            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.huawei.systemmanager",
+                                                      "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            }
+
+            List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent,
+                                                                               PackageManager.MATCH_DEFAULT_ONLY);
+            if (list.size() > 0) {
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, String.valueOf(e));
+        }
     }
 }

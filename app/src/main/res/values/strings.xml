@@ -35,4 +35,6 @@
     <string name="ping_command_for_ipv4">/system/bin/ping</string>
     <string name="ping_command_for_ipv6">/system/bin/ping6</string>
     <string name="text_for_deleted_item_adapter">удалено</string>
+    <string name="autostart_warning">ВНИМАНИЕ: Для регулярного обновления виджета необходимо включить автозапуск приложения.</string>
+    <string name="autostart_button">Включить автозапуск</string>
 </resources>
