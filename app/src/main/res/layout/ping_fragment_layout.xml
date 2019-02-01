@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:theme="@style/AppTheme"
     android:layout_marginTop="@dimen/text_margin">
 
     <LinearLayout
@@ -20,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme">
 
             <RadioButton
                 android:id="@+id/radio_name"
@@ -39,7 +42,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            >
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/hostNameWrapper"
@@ -47,7 +51,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginEnd="@dimen/text_margin"
-                android:hint="@string/address_label">
+                android:hint="@string/address_label"
+                app:hintTextAppearance="@style/AppTheme"
+                android:textColorHint="@color/textPrimaryColor">
 
                 <com.example.pingapplication.TextInputAutoCompleteTextView
                     android:id="@+id/hostName"
@@ -55,7 +61,8 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
                     android:singleLine="false"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                      />
 
             </android.support.design.widget.TextInputLayout>
 

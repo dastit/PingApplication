@@ -78,7 +78,7 @@ public class PingWidgetConfigure extends Activity {
             }
         });
 
-        autoStartButton = findViewById(R.id.autostart_button);
+        autoStartButton = findViewById(com.example.pingapplication.R.id.autostart_button);
         autoStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

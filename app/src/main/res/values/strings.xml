@@ -37,4 +37,5 @@
     <string name="text_for_deleted_item_adapter">удалено</string>
     <string name="autostart_warning">ВНИМАНИЕ: Для регулярного обновления виджета необходимо включить автозапуск приложения.</string>
     <string name="autostart_button">Включить автозапуск</string>
+    <string name="appName">Ping me</string>
 </resources>
