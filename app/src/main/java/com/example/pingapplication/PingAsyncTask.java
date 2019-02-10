@@ -3,7 +3,6 @@ package com.example.pingapplication;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +21,8 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
 
     public interface TaskDelegate {
         void fillConnectionResult(String text);
+
+        void changeButtonName(boolean taskIsFinished);
     }
 
     public PingAsyncTask(TaskDelegate context, String command, String hostName) {
@@ -34,8 +35,8 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
     protected String doInBackground(Void... voids) {
         Runtime runtime = Runtime.getRuntime();
         try {
-            String fullCommand = command + " -w 3 " + hostName;
-            Log.d(TAG, "doInBackground: "+fullCommand);
+            String fullCommand = String.format("%s %s", command, hostName);
+            Log.d(TAG, "doInBackground: " + fullCommand);
             mIpAddrProcess = runtime.exec(fullCommand);
             String   pid            = "";
             String[] processDetails = mIpAddrProcess.toString().split(",");
@@ -45,32 +46,30 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
                     break;
                 }
             }
-            String      line;
-            String      responceTime = NO_CONNECTION;
+            String line;
+            String responceTime = NO_CONNECTION;
 
-            InputStreamReader in = new InputStreamReader(mIpAddrProcess.getInputStream());
+            InputStreamReader in = new InputStreamReader(
+                    mIpAddrProcess.getInputStream());
             BufferedReader bufferedReader = new BufferedReader(in);
-            while ((line = bufferedReader.readLine())!=null ) {
-
+            while ((line = bufferedReader.readLine()) != null) {
                 Log.d(TAG, line + "\n");
+                //getting time value for widget
                 int index = line.indexOf("time=");
                 if (index != -1) {
                     responceTime = line.substring(index + 5);
                 }
+
                 publishProgress(line);
+
                 if (isCancelled()) {
                     runtime.exec("kill -INT " + pid);
                     lineAfterCancelation.append(line).append("\n");
                 }
             }
-            int code  = mIpAddrProcess.waitFor();
             return responceTime;
-
-        } catch (InterruptedException ignore) {
-            publishProgress(ignore.getLocalizedMessage());
-            return NO_CONNECTION;
         } catch (IOException e) {
-            publishProgress(e.getLocalizedMessage());
+            publishProgress("Wrong command, check hostname and parameters carefully.");
             return NO_CONNECTION;
         }
     }
@@ -85,18 +84,22 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        if (delegate != null && result.equals(NO_CONNECTION)) {
-            try {
-                InputStreamReader in = new InputStreamReader(mIpAddrProcess.getErrorStream());
-                BufferedReader bufferedReader = new BufferedReader(in);
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    Log.d(TAG, "onPostExecute: "+line);
-                    delegate.fillConnectionResult(line + "\n");
+        if (delegate != null && mIpAddrProcess != null) {
+            if (result.equals(NO_CONNECTION)) {
+                try {
+                    InputStreamReader in = new InputStreamReader(
+                            mIpAddrProcess.getErrorStream());
+                    BufferedReader bufferedReader = new BufferedReader(in);
+                    String         line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        Log.d(TAG, "onPostExecute: " + line);
+                        delegate.fillConnectionResult(line + "\n");
+                    }
+                } catch (IOException e) {
+                    delegate.fillConnectionResult(e.getLocalizedMessage());
                 }
-            } catch (IOException e) {
-                delegate.fillConnectionResult(e.getLocalizedMessage());
             }
+            delegate.changeButtonName(true);
         }
     }
 
@@ -104,6 +107,7 @@ public class PingAsyncTask extends AsyncTask<Void, String, String> {
     protected void onCancelled() {
         if (delegate != null) {
             delegate.fillConnectionResult(lineAfterCancelation.toString());
+            delegate.changeButtonName(true);
         }
     }
 }

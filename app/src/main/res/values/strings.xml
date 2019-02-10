@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">PingApplication</string>
-    <string name="ping_button_label">PING</string>
+    <string name="ping_button_label">START</string>
     <string name="address_label">Название хоста или IP адрес</string>
     <string name="settings_button_label">Настройки</string>
     <string name="manually_change">Изменить вручную</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="number_of_packs_label">Количество пакетов</string>
     <string name="infinite_number_of_packs">не определено</string>
     <string name="stop_ping_button">STOP</string>
@@ -38,4 +37,5 @@
     <string name="autostart_warning">ВНИМАНИЕ: Для регулярного обновления виджета необходимо включить автозапуск приложения.</string>
     <string name="autostart_button">Включить автозапуск</string>
     <string name="appName">Ping me</string>
+    <string name="ping_button_stop_name">STOP</string>
 </resources>

@@ -31,6 +31,20 @@
         <item name="android:textColor">@color/textPrimaryColor</item>
         <item name="android:fontFamily">@font/offside_font_family</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/textPrimaryColor</item>
+        <item name="android:fontFamily">@font/offside_font_family</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="Base.Widget.AppCompat.DropDownItem.Spinner.removable" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:background">@color/colorLightGrey</item>
 
     </style>
 </resources>

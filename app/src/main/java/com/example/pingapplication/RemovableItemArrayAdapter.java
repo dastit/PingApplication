@@ -28,6 +28,7 @@ public abstract class RemovableItemArrayAdapter<String> extends ArrayAdapter<Str
                                                                 .getApplicationContext());
     }
 
+
     @NonNull
     @Override
     public View getView(final int position, @Nullable final View convertView,

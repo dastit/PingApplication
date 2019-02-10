@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="colorPrimary">#a5d6a7</color>-->
-    <!--<color name="colorPrimaryDark">#75a478</color>-->
-    <!--<color name="colorAccent">#D81B60</color>-->
-    <!--<color name="colorBlack">#000000</color>-->
-    <!--<color name="colorWhite">#ffffff</color>-->
-    <!--<color name="colorYellow">#ffca28</color>-->
-    <!--<color name="colorGreen">#00c853</color>-->
-    <!--<color name="colorRed">#d50000</color>-->
-    <!--<color name="colorDarkGrey">#546e7a</color>-->
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorBlack">#000000</color>
+    <color name="colorPrimary">@color/colorBlack</color>
+    <color name="colorPrimaryDark">@color/colorDarkGrey</color>
+    <color name="colorAccent">#8EF2D8</color>
+    <color name="colorBlack">#222831</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorYellow">#ffca28</color>
     <color name="colorGreen">#00c853</color>
     <color name="colorRed">#d50000</color>
-    <color name="colorDarkGrey">#546e7a</color>
-    <color name="textPrimaryColor">#D81B60</color>
-    <!--<color name="textPrimaryColor">#E5E5E5</color>-->
+    <color name="colorDarkGrey">#000009</color>
+    <color name="colorLightGrey">#4a505a</color>
+    <color name="textPrimaryColor">#E5E5E5</color>
 </resources>
