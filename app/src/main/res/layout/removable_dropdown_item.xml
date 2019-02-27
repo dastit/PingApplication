@@ -26,7 +26,7 @@
         style="?android:attr/dropDownItemStyle"
         android:layout_height="?android:attr/listPreferredItemHeight"
         android:textStyle="italic"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/textPrimaryColor"
         android:text = "@string/text_for_deleted_item_adapter"
         android:ellipsize="marquee"
         android:singleLine="true"

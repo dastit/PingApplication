@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -208,14 +206,15 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
 
     public void startFromIntent(Intent intent) {
         String hostName = "";
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+        if (intent.getAction() != null && Intent.ACTION_VIEW.equals(
+                intent.getAction())) {
             if (intent.getData() != null && intent.getData().getLastPathSegment() != null) {
                 hostName = intent.getData().getLastPathSegment();
             }
         } else {
             hostName = intent.getStringExtra(EXTRA_HOST_NAME);
         }
-        if (!hostName.equals("")) {
+        if (hostName!=null && !hostName.equals("")) {
             Log.d(TAG, "startWithIntent: hostname=" + hostName);
             setIPV(hostName);
             params = "-c 1 ";
@@ -242,7 +241,7 @@ public class PingFragment extends Fragment implements PingAsyncTask.TaskDelegate
     @Override
     public void changeButtonName(boolean taskIsFinished) {
         if (taskIsFinished) {
-            pingButton.setText(R.string.ping_button_label);
+            pingButton.setText(R.string.ping_button_start_name);
         } else {
             pingButton.setText(R.string.ping_button_stop_name);
         }

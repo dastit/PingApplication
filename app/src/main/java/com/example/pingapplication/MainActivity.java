@@ -29,9 +29,9 @@ import java.util.Set;
 import static com.example.pingapplication.PingFragment.EXTRA_WIDGET_ID;
 
 public class MainActivity extends AppCompatActivity {
-    public static final  String PING_WIDGET = "ping_widget";
-    private static final String TAG         = "MainActivity";
-    public PingFragment pingFragment;
+    public static final  String       PING_WIDGET = "ping_widget";
+    private static final String       TAG         = "MainActivity";
+    public               PingFragment pingFragment;
 
     private SplitInstallManager splitInstallManager;
     private int                 sessionId = 0;
@@ -154,24 +154,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        pingFragment.startFromIntent(intent);
+        if (intent != null) {
+            pingFragment.startFromIntent(intent);
 
-        final int widgetId = intent.getIntExtra(EXTRA_WIDGET_ID, -1);
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                if (widgetId != -1) {
-                    Intent updateIntent = new Intent();
-                    updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                    int[] appWidgetIds = new int[1];
-                    appWidgetIds[0] = widgetId;
-                    updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-                    updateIntent.setPackage("com.example.ping_widget");
+            final int widgetId = intent.getIntExtra(EXTRA_WIDGET_ID, -1);
+            if (widgetId != -1) {
+                //update widget
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        Intent updateIntent = new Intent();
+                        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                        int[] appWidgetIds = new int[1];
+                        appWidgetIds[0] = widgetId;
+                        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+                        updateIntent.setPackage("com.example.ping_widget");
 
-                    sendBroadcast(updateIntent);
-                }
-                return null;
+                        sendBroadcast(updateIntent);
+
+                        return null;
+                    }
+                }.execute();
             }
-        }.execute();
+        }
     }
 }

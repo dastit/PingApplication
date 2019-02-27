@@ -43,7 +43,7 @@
     </style>
 
     <style name="Base.Widget.AppCompat.DropDownItem.Spinner.removable" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">@color/textPrimaryColor</item>
         <item name="android:background">@color/colorLightGrey</item>
 
     </style>

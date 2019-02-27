@@ -61,12 +61,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:padding="@dimen/text_margin"
         android:text="@string/save_button_label" />
 
     <TextView
         android:id="@+id/autostart_warning"
+        android:textColor="@color/colorLightGrey"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -78,5 +79,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:textColor="@color/colorLightGrey"
         android:text="@string/autostart_button" />
 </LinearLayout>
