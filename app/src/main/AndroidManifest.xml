@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.pingapplication">
+    package="com.simpleapps.pingme">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,7 +15,7 @@
         android:theme="@style/AppThemeNoBar"
         android:largeHeap="true">
         <activity
-            android:name=".MainActivity"
+            android:name="com.simpleapps.pingme.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop">

@@ -5,7 +5,7 @@
     android:updatePeriodMillis="0"
     android:previewImage="@drawable/ping_widget_preview"
     android:initialLayout="@layout/ping_widget"
-    android:configure="com.example.ping_widget.PingWidgetConfigure"
+    android:configure="com.simpleapps.ping_widget.PingWidgetConfigure"
     android:resizeMode="none"
     android:widgetCategory="home_screen">
 </appwidget-provider>

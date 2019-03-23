@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.example.ping_widget">
+    package="com.simpleapps.ping_widget">
 
     <dist:module
         dist:onDemand="true"
@@ -8,14 +8,14 @@
         <dist:fusing dist:include="true" />
     </dist:module>
     <application>
-        <activity android:name="com.example.ping_widget.PingWidgetConfigure">
+        <activity android:name="com.simpleapps.ping_widget.PingWidgetConfigure">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
                 <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
         <receiver
-            android:name="com.example.ping_widget.PingWidgetProvider"
+            android:name="com.simpleapps.ping_widget.PingWidgetProvider"
             android:previewImage="@drawable/ping_widget_preview">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
